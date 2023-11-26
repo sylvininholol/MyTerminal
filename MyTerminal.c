@@ -58,13 +58,10 @@ int main() {
             break;
         }
 
-        // Adiciona o comando ao histórico
+        /* Apenas uma feature para deixar mais elegante, com o include do readline, podemos usar as setas para
+         recuperar o histórico do que escrevemos.*/
         add_history(input);
-
-        // Executa o comando
         execute_command(input);
-
-        // Libera a memória alocada por readline
         free(input);
     }
 

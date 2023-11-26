@@ -58,7 +58,7 @@ int main() {
             break;
         }
 
-        /* Apenas uma feature para deixar mais elegante, com o include do readline, podemos usar as setas para
+        /* Apenas uma feature para deixar mais elegante, com o include do readline podemos usar as setas para
          recuperar o histórico do que escrevemos.*/
         add_history(input);
         execute_command(input);

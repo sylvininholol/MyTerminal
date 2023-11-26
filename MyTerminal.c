@@ -40,7 +40,8 @@ void execute_command(char *command) {
         exit(EXIT_FAILURE);
         }
 
-    } else {  // Processo pai
+    } 
+    else {  // Processo pai
         int status;
         waitpid(pid, &status, 0);
     }

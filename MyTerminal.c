@@ -13,37 +13,54 @@
 #define MAX_INPUT_SIZE 1024
 
 void execute_command(char *command) {
-    pid_t pid = fork();
+    // Tokenize a entrada usando ";" como delimitador
+    char *commands[MAX_INPUT_SIZE];
+    int command_count = 0;
+    char *token = strtok(command, ";");
 
-    if (pid == -1) {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    } 
-    else if (pid == 0) {  // Processo filho
-        char *args[MAX_INPUT_SIZE];
-        int arg_count = 0;
-        char *token = strtok(command, " ");
-
-        while (token != NULL) {
-            args[arg_count++] = token;
-            token = strtok(NULL, " ");
+    while (token != NULL) {
+        // Remove espaços em branco no início
+        while (*token == ' ' || *token == '\t') {
+            ++token;
         }
 
-        args[arg_count] = NULL;
+        // Adiciona o comando à lista
+        commands[command_count++] = token;
+        token = strtok(NULL, ";");
+    }
 
-        // Executa o comando
-        int bandeira = execvp(args[0], args);
+    for (int i = 0; i < command_count; ++i) {
+        // Executa cada comando
+        pid_t pid = fork();
 
+        if (pid == -1) {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        } 
+        else if (pid == 0) {  // Processo filho
+            char *args[MAX_INPUT_SIZE];
+            int arg_count = 0;
+            token = strtok(commands[i], " ");
 
-        if(bandeira == -1){
-        perror("execvp");
-        exit(EXIT_FAILURE);
+            while (token != NULL) {
+                args[arg_count++] = token;
+                token = strtok(NULL, " ");
+            }
+
+            args[arg_count] = NULL;
+
+            // Executa o comando
+            int bandeira = execvp(args[0], args);
+
+            if (bandeira == -1) {
+                perror("execvp");
+                exit(EXIT_FAILURE);
+            }
+        } 
+        else {  // Processo pai
+            int status;
+            waitpid(pid, &status, 0);
         }
-
-    } 
-    else {  // Processo pai
-        int status;
-        waitpid(pid, &status, 0);
     }
 }
 
